@@ -1,11 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import {
   Package, CheckCircle2, Clock, AlertTriangle, Image, DollarSign,
-  Truck, Network, Copy, ArrowLeft, History, TrendingUp,
+  Truck, Network, Copy, ArrowLeft, History, TrendingUp, Plus, Zap,
 } from "lucide-react";
+import { KPICard } from "@/components/dashboard/kpi-card";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, Legend,
@@ -91,23 +92,13 @@ async function fetchRecentAuditLogs() {
 }
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { data: stats } = useQuery({ queryKey: ["stats"], queryFn: fetchStats });
   const { data: recent } = useQuery({ queryKey: ["recent"], queryFn: fetchRecent });
   const { data: families } = useQuery({ queryKey: ["families"], queryFn: fetchTypeBreakdown });
   const { data: statusDist } = useQuery({ queryKey: ["status-dist"], queryFn: fetchStatusDistribution });
   const { data: monthlyActivity } = useQuery({ queryKey: ["monthly-activity"], queryFn: fetchMonthlyActivity });
   const { data: auditLogs } = useQuery({ queryKey: ["recent-audit"], queryFn: fetchRecentAuditLogs });
-
-  const kpis = [
-    { label: "اجمالي البنود", value: stats?.products, icon: Package, tone: "primary" },
-    { label: "بنود معتمدة", value: stats?.approved, icon: CheckCircle2, tone: "success" },
-    { label: "مسودات", value: stats?.draft, icon: Clock, tone: "muted" },
-    { label: "تحتاج مراجعة", value: stats?.needsReview, icon: AlertTriangle, tone: "warning" },
-    { label: "الاصول الرقمية", value: stats?.assets, icon: Image, tone: "primary" },
-    { label: "سجلات الاسعار", value: stats?.prices, icon: DollarSign, tone: "primary" },
-    { label: "الموردون", value: stats?.suppliers, icon: Truck, tone: "primary" },
-    { label: "تكاملات API", value: stats?.integrations, icon: Network, tone: "primary" },
-  ];
 
   const statusColors: Record<string, string> = {
     approved: "#10b981",
@@ -145,19 +136,119 @@ function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {kpis.map((k) => (
-          <Card key={k.label} className="p-4 surface-elevated border-0">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-xs text-muted-foreground">{k.label}</div>
-                <div className="text-2xl font-bold mt-1 num">{k.value?.toLocaleString("en-US") ?? "—"}</div>
-              </div>
-              <div className="size-9 rounded-md bg-secondary grid place-items-center">
-                <k.icon className="size-4 text-primary" />
+        <KPICard
+          label="اجمالي البنود"
+          value={stats?.products}
+          icon={Package}
+          tone="primary"
+          onClick={() => navigate({ to: "/products" })}
+        />
+        <KPICard
+          label="بنود معتمدة"
+          value={stats?.approved}
+          icon={CheckCircle2}
+          tone="success"
+          onClick={() => navigate({ to: "/products" })}
+        />
+        <KPICard
+          label="مسودات"
+          value={stats?.draft}
+          icon={Clock}
+          tone="muted"
+          onClick={() => navigate({ to: "/products" })}
+        />
+        <KPICard
+          label="تحتاج مراجعة"
+          value={stats?.needsReview}
+          icon={AlertTriangle}
+          tone="warning"
+          onClick={() => navigate({ to: "/products" })}
+        />
+        <KPICard
+          label="الاصول الرقمية"
+          value={stats?.assets}
+          icon={Image}
+          tone="primary"
+          onClick={() => navigate({ to: "/assets" })}
+        />
+        <KPICard
+          label="سجلات الاسعار"
+          value={stats?.prices}
+          icon={DollarSign}
+          tone="primary"
+          onClick={() => navigate({ to: "/pricing" })}
+        />
+        <KPICard
+          label="الموردون"
+          value={stats?.suppliers}
+          icon={Truck}
+          tone="primary"
+          onClick={() => navigate({ to: "/suppliers" })}
+        />
+        <KPICard
+          label="تكاملات API"
+          value={stats?.integrations}
+          icon={Network}
+          tone="primary"
+          onClick={() => navigate({ to: "/api-center" })}
+        />
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-4">
+        <Card className="p-5 surface-elevated border-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Plus className="size-5 text-accent" />
+            <h3 className="font-bold">الإجراءات السريعة</h3>
+          </div>
+          <div className="space-y-2">
+            <button
+              onClick={() => navigate({ to: "/products" })}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border hover:bg-secondary transition-colors text-right"
+            >
+              إنشاء بند جديد
+            </button>
+            <button
+              onClick={() => navigate({ to: "/import" })}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border hover:bg-secondary transition-colors text-right"
+            >
+              استيراد بنود
+            </button>
+            <button
+              onClick={() => navigate({ to: "/pricing" })}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border hover:bg-secondary transition-colors text-right"
+            >
+              إدارة التسعير
+            </button>
+          </div>
+        </Card>
+
+        <Card className="p-5 surface-elevated border-0 md:col-span-2">
+          <div className="flex items-center gap-2 mb-3">
+            <Zap className="size-5 text-warning" />
+            <h3 className="font-bold">حالة النظام</h3>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">نسبة اكتمال البيانات</span>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-24 bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-success" style={{ width: "87%" }} />
+                </div>
+                <span className="num text-xs font-medium">87%</span>
               </div>
             </div>
-          </Card>
-        ))}
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">البنود المعتمدة</span>
+              <span className="num font-medium">{stats?.approved}/{stats?.products}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">انتظار المراجعة</span>
+              <span className={`num font-medium ${stats?.needsReview ? "text-warning" : ""}`}>
+                {stats?.needsReview}
+              </span>
+            </div>
+          </div>
+        </Card>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
@@ -281,7 +372,7 @@ function Dashboard() {
           <h3 className="font-bold">حوكمة البيانات</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          النظام يلتزم بسياسات صارمة: لا حذف نهائي، كل تعديل مسجل في audit_logs، التصدير محصور بالبنود
+          النظام يلتزم بسياسات صارمة: لا حذف نهائي، كل ت��ديل مسجل في audit_logs، التصدير محصور بالبنود
           المعتمدة، تعديل الاسعار يحفظ التاريخ تلقائيا، ولا يتم اعتماد بند بدون البيانات الاساسية الكاملة.
         </p>
       </Card>

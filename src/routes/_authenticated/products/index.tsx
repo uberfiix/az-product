@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Search, Download, Filter, X, FileSpreadsheet, FileJson } from "lucide-react";
+import { ProductCreateDialog } from "@/components/product-create-dialog";
 
 export const Route = createFileRoute("/_authenticated/products/")({
   head: () => ({ meta: [{ title: "المنتجات والخدمات — Alazab PAOP" }] }),
@@ -189,6 +190,7 @@ function ProductsList() {
           </p>
         </div>
         <div className="flex gap-2">
+          <ProductCreateDialog />
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" disabled={exportLoading}>
