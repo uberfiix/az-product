@@ -89,7 +89,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 {sec.items.map((item) => {
                   const active = currentPath === item.to || currentPath.startsWith(item.to + "/");
-                  const built = item.phase <= 2;
+                  const built = item.phase <= 3;
                   return (
                     <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
