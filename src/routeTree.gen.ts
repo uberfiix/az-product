@@ -17,11 +17,19 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedPricingIndexRouteImport } from './routes/_authenticated/pricing/index'
+import { Route as AuthenticatedImportIndexRouteImport } from './routes/_authenticated/import/index'
+import { Route as AuthenticatedExportIndexRouteImport } from './routes/_authenticated/export/index'
 import { Route as AuthenticatedAssetsIndexRouteImport } from './routes/_authenticated/assets/index'
+import { Route as AuthenticatedApiCenterIndexRouteImport } from './routes/_authenticated/api-center/index'
 import { Route as AuthenticatedProductsIdRouteImport } from './routes/_authenticated/products/$id'
 import { Route as AuthenticatedAssetsUnlinkedRouteImport } from './routes/_authenticated/assets/unlinked'
 import { Route as AuthenticatedAssetsDuplicatesRouteImport } from './routes/_authenticated/assets/duplicates'
 import { Route as AuthenticatedAssetsBulkUploadRouteImport } from './routes/_authenticated/assets/bulk-upload'
+import { Route as ApiPublicV1SuppliersRouteImport } from './routes/api/public/v1/suppliers'
+import { Route as ApiPublicV1ProductsRouteImport } from './routes/api/public/v1/products'
+import { Route as ApiPublicV1PricingRouteImport } from './routes/api/public/v1/pricing'
+import { Route as ApiPublicV1AssetsRouteImport } from './routes/api/public/v1/assets'
+import { Route as ApiPublicV1ProductsAzCodeRouteImport } from './routes/api/public/v1/products/$azCode'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -65,10 +73,28 @@ const AuthenticatedPricingIndexRoute =
     path: '/pricing/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedImportIndexRoute =
+  AuthenticatedImportIndexRouteImport.update({
+    id: '/import/',
+    path: '/import/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedExportIndexRoute =
+  AuthenticatedExportIndexRouteImport.update({
+    id: '/export/',
+    path: '/export/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAssetsIndexRoute =
   AuthenticatedAssetsIndexRouteImport.update({
     id: '/assets/',
     path: '/assets/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedApiCenterIndexRoute =
+  AuthenticatedApiCenterIndexRouteImport.update({
+    id: '/api-center/',
+    path: '/api-center/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProductsIdRoute = AuthenticatedProductsIdRouteImport.update({
@@ -94,6 +120,32 @@ const AuthenticatedAssetsBulkUploadRoute =
     path: '/assets/bulk-upload',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiPublicV1SuppliersRoute = ApiPublicV1SuppliersRouteImport.update({
+  id: '/api/public/v1/suppliers',
+  path: '/api/public/v1/suppliers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ProductsRoute = ApiPublicV1ProductsRouteImport.update({
+  id: '/api/public/v1/products',
+  path: '/api/public/v1/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PricingRoute = ApiPublicV1PricingRouteImport.update({
+  id: '/api/public/v1/pricing',
+  path: '/api/public/v1/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1AssetsRoute = ApiPublicV1AssetsRouteImport.update({
+  id: '/api/public/v1/assets',
+  path: '/api/public/v1/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ProductsAzCodeRoute =
+  ApiPublicV1ProductsAzCodeRouteImport.update({
+    id: '/$azCode',
+    path: '/$azCode',
+    getParentRoute: () => ApiPublicV1ProductsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -104,10 +156,18 @@ export interface FileRoutesByFullPath {
   '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
   '/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/products/$id': typeof AuthenticatedProductsIdRoute
+  '/api-center/': typeof AuthenticatedApiCenterIndexRoute
   '/assets/': typeof AuthenticatedAssetsIndexRoute
+  '/export/': typeof AuthenticatedExportIndexRoute
+  '/import/': typeof AuthenticatedImportIndexRoute
   '/pricing/': typeof AuthenticatedPricingIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
+  '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
+  '/api/public/v1/suppliers': typeof ApiPublicV1SuppliersRoute
+  '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,10 +178,18 @@ export interface FileRoutesByTo {
   '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
   '/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/products/$id': typeof AuthenticatedProductsIdRoute
+  '/api-center': typeof AuthenticatedApiCenterIndexRoute
   '/assets': typeof AuthenticatedAssetsIndexRoute
+  '/export': typeof AuthenticatedExportIndexRoute
+  '/import': typeof AuthenticatedImportIndexRoute
   '/pricing': typeof AuthenticatedPricingIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
+  '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
+  '/api/public/v1/suppliers': typeof ApiPublicV1SuppliersRoute
+  '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -134,10 +202,18 @@ export interface FileRoutesById {
   '/_authenticated/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
   '/_authenticated/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/_authenticated/products/$id': typeof AuthenticatedProductsIdRoute
+  '/_authenticated/api-center/': typeof AuthenticatedApiCenterIndexRoute
   '/_authenticated/assets/': typeof AuthenticatedAssetsIndexRoute
+  '/_authenticated/export/': typeof AuthenticatedExportIndexRoute
+  '/_authenticated/import/': typeof AuthenticatedImportIndexRoute
   '/_authenticated/pricing/': typeof AuthenticatedPricingIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
+  '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
+  '/api/public/v1/suppliers': typeof ApiPublicV1SuppliersRoute
+  '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,10 +226,18 @@ export interface FileRouteTypes {
     | '/assets/duplicates'
     | '/assets/unlinked'
     | '/products/$id'
+    | '/api-center/'
     | '/assets/'
+    | '/export/'
+    | '/import/'
     | '/pricing/'
     | '/products/'
     | '/suppliers/'
+    | '/api/public/v1/assets'
+    | '/api/public/v1/pricing'
+    | '/api/public/v1/products'
+    | '/api/public/v1/suppliers'
+    | '/api/public/v1/products/$azCode'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,10 +248,18 @@ export interface FileRouteTypes {
     | '/assets/duplicates'
     | '/assets/unlinked'
     | '/products/$id'
+    | '/api-center'
     | '/assets'
+    | '/export'
+    | '/import'
     | '/pricing'
     | '/products'
     | '/suppliers'
+    | '/api/public/v1/assets'
+    | '/api/public/v1/pricing'
+    | '/api/public/v1/products'
+    | '/api/public/v1/suppliers'
+    | '/api/public/v1/products/$azCode'
   id:
     | '__root__'
     | '/'
@@ -179,16 +271,28 @@ export interface FileRouteTypes {
     | '/_authenticated/assets/duplicates'
     | '/_authenticated/assets/unlinked'
     | '/_authenticated/products/$id'
+    | '/_authenticated/api-center/'
     | '/_authenticated/assets/'
+    | '/_authenticated/export/'
+    | '/_authenticated/import/'
     | '/_authenticated/pricing/'
     | '/_authenticated/products/'
     | '/_authenticated/suppliers/'
+    | '/api/public/v1/assets'
+    | '/api/public/v1/pricing'
+    | '/api/public/v1/products'
+    | '/api/public/v1/suppliers'
+    | '/api/public/v1/products/$azCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiPublicV1AssetsRoute: typeof ApiPublicV1AssetsRoute
+  ApiPublicV1PricingRoute: typeof ApiPublicV1PricingRoute
+  ApiPublicV1ProductsRoute: typeof ApiPublicV1ProductsRouteWithChildren
+  ApiPublicV1SuppliersRoute: typeof ApiPublicV1SuppliersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -249,11 +353,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPricingIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/import/': {
+      id: '/_authenticated/import/'
+      path: '/import'
+      fullPath: '/import/'
+      preLoaderRoute: typeof AuthenticatedImportIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/export/': {
+      id: '/_authenticated/export/'
+      path: '/export'
+      fullPath: '/export/'
+      preLoaderRoute: typeof AuthenticatedExportIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/assets/': {
       id: '/_authenticated/assets/'
       path: '/assets'
       fullPath: '/assets/'
       preLoaderRoute: typeof AuthenticatedAssetsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/api-center/': {
+      id: '/_authenticated/api-center/'
+      path: '/api-center'
+      fullPath: '/api-center/'
+      preLoaderRoute: typeof AuthenticatedApiCenterIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/products/$id': {
@@ -284,6 +409,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAssetsBulkUploadRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/v1/suppliers': {
+      id: '/api/public/v1/suppliers'
+      path: '/api/public/v1/suppliers'
+      fullPath: '/api/public/v1/suppliers'
+      preLoaderRoute: typeof ApiPublicV1SuppliersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/products': {
+      id: '/api/public/v1/products'
+      path: '/api/public/v1/products'
+      fullPath: '/api/public/v1/products'
+      preLoaderRoute: typeof ApiPublicV1ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pricing': {
+      id: '/api/public/v1/pricing'
+      path: '/api/public/v1/pricing'
+      fullPath: '/api/public/v1/pricing'
+      preLoaderRoute: typeof ApiPublicV1PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/assets': {
+      id: '/api/public/v1/assets'
+      path: '/api/public/v1/assets'
+      fullPath: '/api/public/v1/assets'
+      preLoaderRoute: typeof ApiPublicV1AssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/products/$azCode': {
+      id: '/api/public/v1/products/$azCode'
+      path: '/$azCode'
+      fullPath: '/api/public/v1/products/$azCode'
+      preLoaderRoute: typeof ApiPublicV1ProductsAzCodeRouteImport
+      parentRoute: typeof ApiPublicV1ProductsRoute
+    }
   }
 }
 
@@ -294,7 +454,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAssetsDuplicatesRoute: typeof AuthenticatedAssetsDuplicatesRoute
   AuthenticatedAssetsUnlinkedRoute: typeof AuthenticatedAssetsUnlinkedRoute
   AuthenticatedProductsIdRoute: typeof AuthenticatedProductsIdRoute
+  AuthenticatedApiCenterIndexRoute: typeof AuthenticatedApiCenterIndexRoute
   AuthenticatedAssetsIndexRoute: typeof AuthenticatedAssetsIndexRoute
+  AuthenticatedExportIndexRoute: typeof AuthenticatedExportIndexRoute
+  AuthenticatedImportIndexRoute: typeof AuthenticatedImportIndexRoute
   AuthenticatedPricingIndexRoute: typeof AuthenticatedPricingIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
@@ -307,7 +470,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAssetsDuplicatesRoute: AuthenticatedAssetsDuplicatesRoute,
   AuthenticatedAssetsUnlinkedRoute: AuthenticatedAssetsUnlinkedRoute,
   AuthenticatedProductsIdRoute: AuthenticatedProductsIdRoute,
+  AuthenticatedApiCenterIndexRoute: AuthenticatedApiCenterIndexRoute,
   AuthenticatedAssetsIndexRoute: AuthenticatedAssetsIndexRoute,
+  AuthenticatedExportIndexRoute: AuthenticatedExportIndexRoute,
+  AuthenticatedImportIndexRoute: AuthenticatedImportIndexRoute,
   AuthenticatedPricingIndexRoute: AuthenticatedPricingIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
@@ -317,10 +483,25 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ApiPublicV1ProductsRouteChildren {
+  ApiPublicV1ProductsAzCodeRoute: typeof ApiPublicV1ProductsAzCodeRoute
+}
+
+const ApiPublicV1ProductsRouteChildren: ApiPublicV1ProductsRouteChildren = {
+  ApiPublicV1ProductsAzCodeRoute: ApiPublicV1ProductsAzCodeRoute,
+}
+
+const ApiPublicV1ProductsRouteWithChildren =
+  ApiPublicV1ProductsRoute._addFileChildren(ApiPublicV1ProductsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiPublicV1AssetsRoute: ApiPublicV1AssetsRoute,
+  ApiPublicV1PricingRoute: ApiPublicV1PricingRoute,
+  ApiPublicV1ProductsRoute: ApiPublicV1ProductsRouteWithChildren,
+  ApiPublicV1SuppliersRoute: ApiPublicV1SuppliersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
