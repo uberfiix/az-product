@@ -23,6 +23,7 @@ import { Route as AuthenticatedAssetsUnlinkedRouteImport } from './routes/_authe
 import { Route as AuthenticatedAssetsDuplicatesRouteImport } from './routes/_authenticated/assets/duplicates'
 import { Route as AuthenticatedAssetsBulkUploadRouteImport } from './routes/_authenticated/assets/bulk-upload'
 import { Route as ApiPublicV1ProductsRouteImport } from './routes/api/public/v1/products'
+import { Route as ApiPublicV1PricingRouteImport } from './routes/api/public/v1/pricing'
 import { Route as ApiPublicV1ProductsAzCodeRouteImport } from './routes/api/public/v1/products/$azCode'
 
 const LoginRoute = LoginRouteImport.update({
@@ -101,6 +102,11 @@ const ApiPublicV1ProductsRoute = ApiPublicV1ProductsRouteImport.update({
   path: '/api/public/v1/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1PricingRoute = ApiPublicV1PricingRouteImport.update({
+  id: '/api/public/v1/pricing',
+  path: '/api/public/v1/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1ProductsAzCodeRoute =
   ApiPublicV1ProductsAzCodeRouteImport.update({
     id: '/$azCode',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/pricing/': typeof AuthenticatedPricingIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
   '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof AuthenticatedPricingIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
   '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/_authenticated/pricing/': typeof AuthenticatedPricingIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
   '/api/public/v1/products/$azCode': typeof ApiPublicV1ProductsAzCodeRoute
 }
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/pricing/'
     | '/products/'
     | '/suppliers/'
+    | '/api/public/v1/pricing'
     | '/api/public/v1/products'
     | '/api/public/v1/products/$azCode'
   fileRoutesByTo: FileRoutesByTo
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/products'
     | '/suppliers'
+    | '/api/public/v1/pricing'
     | '/api/public/v1/products'
     | '/api/public/v1/products/$azCode'
   id:
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/_authenticated/pricing/'
     | '/_authenticated/products/'
     | '/_authenticated/suppliers/'
+    | '/api/public/v1/pricing'
     | '/api/public/v1/products'
     | '/api/public/v1/products/$azCode'
   fileRoutesById: FileRoutesById
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiPublicV1PricingRoute: typeof ApiPublicV1PricingRoute
   ApiPublicV1ProductsRoute: typeof ApiPublicV1ProductsRouteWithChildren
 }
 
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/pricing': {
+      id: '/api/public/v1/pricing'
+      path: '/api/public/v1/pricing'
+      fullPath: '/api/public/v1/pricing'
+      preLoaderRoute: typeof ApiPublicV1PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/products/$azCode': {
       id: '/api/public/v1/products/$azCode'
       path: '/$azCode'
@@ -372,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiPublicV1PricingRoute: ApiPublicV1PricingRoute,
   ApiPublicV1ProductsRoute: ApiPublicV1ProductsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
