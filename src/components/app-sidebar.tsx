@@ -45,7 +45,7 @@ const sections = [
       { title: "مركز الاستيراد", to: "/import", icon: Upload, phase: 4 },
       { title: "مركز التصدير", to: "/export", icon: Download, phase: 4 },
       { title: "مركز API", to: "/api-center", icon: Network, phase: 4 },
-      { title: "مساعد AI", to: "/ai-review", icon: Sparkles, phase: 5 },
+      { title: "مساعد AI", to: "/ai-review", icon: Sparkles, phase: 1 },
     ],
   },
   {
