@@ -13,6 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
+import { Route as AuthenticatedQuoteRequestsRouteImport } from './routes/_authenticated/quote-requests'
+import { Route as AuthenticatedManufacturingOrdersRouteImport } from './routes/_authenticated/manufacturing-orders'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAuditLogsRouteImport } from './routes/_authenticated/audit-logs'
 import { Route as AuthenticatedAiReviewRouteImport } from './routes/_authenticated/ai-review'
@@ -33,6 +35,9 @@ import { Route as ApiPublicV1SuppliersRouteImport } from './routes/api/public/v1
 import { Route as ApiPublicV1ProductsRouteImport } from './routes/api/public/v1/products'
 import { Route as ApiPublicV1PricingRouteImport } from './routes/api/public/v1/pricing'
 import { Route as ApiPublicV1AssetsRouteImport } from './routes/api/public/v1/assets'
+import { Route as ApiAgentV1QuoteResponseRouteImport } from './routes/api/agent/v1/quote-response'
+import { Route as ApiAgentV1QuoteRequestRouteImport } from './routes/api/agent/v1/quote-request'
+import { Route as ApiAgentV1OrderStatusRouteImport } from './routes/api/agent/v1/order-status'
 import { Route as ApiPublicV1ProductsAzCodeRouteImport } from './routes/api/public/v1/products/$azCode'
 
 const LoginRoute = LoginRouteImport.update({
@@ -54,6 +59,18 @@ const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
   path: '/support',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedQuoteRequestsRoute =
+  AuthenticatedQuoteRequestsRouteImport.update({
+    id: '/quote-requests',
+    path: '/quote-requests',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedManufacturingOrdersRoute =
+  AuthenticatedManufacturingOrdersRouteImport.update({
+    id: '/manufacturing-orders',
+    path: '/manufacturing-orders',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -166,6 +183,21 @@ const ApiPublicV1AssetsRoute = ApiPublicV1AssetsRouteImport.update({
   path: '/api/public/v1/assets',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAgentV1QuoteResponseRoute = ApiAgentV1QuoteResponseRouteImport.update({
+  id: '/api/agent/v1/quote-response',
+  path: '/api/agent/v1/quote-response',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAgentV1QuoteRequestRoute = ApiAgentV1QuoteRequestRouteImport.update({
+  id: '/api/agent/v1/quote-request',
+  path: '/api/agent/v1/quote-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAgentV1OrderStatusRoute = ApiAgentV1OrderStatusRouteImport.update({
+  id: '/api/agent/v1/order-status',
+  path: '/api/agent/v1/order-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1ProductsAzCodeRoute =
   ApiPublicV1ProductsAzCodeRouteImport.update({
     id: '/$azCode',
@@ -179,6 +211,8 @@ export interface FileRoutesByFullPath {
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
+  '/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/support': typeof AuthenticatedSupportRoute
   '/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
   '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
@@ -193,6 +227,9 @@ export interface FileRoutesByFullPath {
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/agent/v1/order-status': typeof ApiAgentV1OrderStatusRoute
+  '/api/agent/v1/quote-request': typeof ApiAgentV1QuoteRequestRoute
+  '/api/agent/v1/quote-response': typeof ApiAgentV1QuoteResponseRoute
   '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
   '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
@@ -205,6 +242,8 @@ export interface FileRoutesByTo {
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
+  '/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/support': typeof AuthenticatedSupportRoute
   '/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
   '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
@@ -219,6 +258,9 @@ export interface FileRoutesByTo {
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
+  '/api/agent/v1/order-status': typeof ApiAgentV1OrderStatusRoute
+  '/api/agent/v1/quote-request': typeof ApiAgentV1QuoteRequestRoute
+  '/api/agent/v1/quote-response': typeof ApiAgentV1QuoteResponseRoute
   '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
   '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
@@ -233,6 +275,8 @@ export interface FileRoutesById {
   '/_authenticated/ai-review': typeof AuthenticatedAiReviewRoute
   '/_authenticated/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
+  '/_authenticated/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/_authenticated/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
   '/_authenticated/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
@@ -247,6 +291,9 @@ export interface FileRoutesById {
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/api/agent/v1/order-status': typeof ApiAgentV1OrderStatusRoute
+  '/api/agent/v1/quote-request': typeof ApiAgentV1QuoteRequestRoute
+  '/api/agent/v1/quote-response': typeof ApiAgentV1QuoteResponseRoute
   '/api/public/v1/assets': typeof ApiPublicV1AssetsRoute
   '/api/public/v1/pricing': typeof ApiPublicV1PricingRoute
   '/api/public/v1/products': typeof ApiPublicV1ProductsRouteWithChildren
@@ -261,6 +308,8 @@ export interface FileRouteTypes {
     | '/ai-review'
     | '/audit-logs'
     | '/dashboard'
+    | '/manufacturing-orders'
+    | '/quote-requests'
     | '/support'
     | '/assets/bulk-upload'
     | '/assets/duplicates'
@@ -275,6 +324,9 @@ export interface FileRouteTypes {
     | '/products/'
     | '/settings/'
     | '/suppliers/'
+    | '/api/agent/v1/order-status'
+    | '/api/agent/v1/quote-request'
+    | '/api/agent/v1/quote-response'
     | '/api/public/v1/assets'
     | '/api/public/v1/pricing'
     | '/api/public/v1/products'
@@ -287,6 +339,8 @@ export interface FileRouteTypes {
     | '/ai-review'
     | '/audit-logs'
     | '/dashboard'
+    | '/manufacturing-orders'
+    | '/quote-requests'
     | '/support'
     | '/assets/bulk-upload'
     | '/assets/duplicates'
@@ -301,6 +355,9 @@ export interface FileRouteTypes {
     | '/products'
     | '/settings'
     | '/suppliers'
+    | '/api/agent/v1/order-status'
+    | '/api/agent/v1/quote-request'
+    | '/api/agent/v1/quote-response'
     | '/api/public/v1/assets'
     | '/api/public/v1/pricing'
     | '/api/public/v1/products'
@@ -314,6 +371,8 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-review'
     | '/_authenticated/audit-logs'
     | '/_authenticated/dashboard'
+    | '/_authenticated/manufacturing-orders'
+    | '/_authenticated/quote-requests'
     | '/_authenticated/support'
     | '/_authenticated/assets/bulk-upload'
     | '/_authenticated/assets/duplicates'
@@ -328,6 +387,9 @@ export interface FileRouteTypes {
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/suppliers/'
+    | '/api/agent/v1/order-status'
+    | '/api/agent/v1/quote-request'
+    | '/api/agent/v1/quote-response'
     | '/api/public/v1/assets'
     | '/api/public/v1/pricing'
     | '/api/public/v1/products'
@@ -339,6 +401,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiAgentV1OrderStatusRoute: typeof ApiAgentV1OrderStatusRoute
+  ApiAgentV1QuoteRequestRoute: typeof ApiAgentV1QuoteRequestRoute
+  ApiAgentV1QuoteResponseRoute: typeof ApiAgentV1QuoteResponseRoute
   ApiPublicV1AssetsRoute: typeof ApiPublicV1AssetsRoute
   ApiPublicV1PricingRoute: typeof ApiPublicV1PricingRoute
   ApiPublicV1ProductsRoute: typeof ApiPublicV1ProductsRouteWithChildren
@@ -373,6 +438,20 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof AuthenticatedSupportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/quote-requests': {
+      id: '/_authenticated/quote-requests'
+      path: '/quote-requests'
+      fullPath: '/quote-requests'
+      preLoaderRoute: typeof AuthenticatedQuoteRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/manufacturing-orders': {
+      id: '/_authenticated/manufacturing-orders'
+      path: '/manufacturing-orders'
+      fullPath: '/manufacturing-orders'
+      preLoaderRoute: typeof AuthenticatedManufacturingOrdersRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -515,6 +594,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1AssetsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/agent/v1/quote-response': {
+      id: '/api/agent/v1/quote-response'
+      path: '/api/agent/v1/quote-response'
+      fullPath: '/api/agent/v1/quote-response'
+      preLoaderRoute: typeof ApiAgentV1QuoteResponseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/agent/v1/quote-request': {
+      id: '/api/agent/v1/quote-request'
+      path: '/api/agent/v1/quote-request'
+      fullPath: '/api/agent/v1/quote-request'
+      preLoaderRoute: typeof ApiAgentV1QuoteRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/agent/v1/order-status': {
+      id: '/api/agent/v1/order-status'
+      path: '/api/agent/v1/order-status'
+      fullPath: '/api/agent/v1/order-status'
+      preLoaderRoute: typeof ApiAgentV1OrderStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/products/$azCode': {
       id: '/api/public/v1/products/$azCode'
       path: '/$azCode'
@@ -529,6 +629,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAiReviewRoute: typeof AuthenticatedAiReviewRoute
   AuthenticatedAuditLogsRoute: typeof AuthenticatedAuditLogsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedManufacturingOrdersRoute: typeof AuthenticatedManufacturingOrdersRoute
+  AuthenticatedQuoteRequestsRoute: typeof AuthenticatedQuoteRequestsRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
   AuthenticatedAssetsBulkUploadRoute: typeof AuthenticatedAssetsBulkUploadRoute
   AuthenticatedAssetsDuplicatesRoute: typeof AuthenticatedAssetsDuplicatesRoute
@@ -549,6 +651,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiReviewRoute: AuthenticatedAiReviewRoute,
   AuthenticatedAuditLogsRoute: AuthenticatedAuditLogsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedManufacturingOrdersRoute: AuthenticatedManufacturingOrdersRoute,
+  AuthenticatedQuoteRequestsRoute: AuthenticatedQuoteRequestsRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
   AuthenticatedAssetsBulkUploadRoute: AuthenticatedAssetsBulkUploadRoute,
   AuthenticatedAssetsDuplicatesRoute: AuthenticatedAssetsDuplicatesRoute,
@@ -584,6 +688,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiAgentV1OrderStatusRoute: ApiAgentV1OrderStatusRoute,
+  ApiAgentV1QuoteRequestRoute: ApiAgentV1QuoteRequestRoute,
+  ApiAgentV1QuoteResponseRoute: ApiAgentV1QuoteResponseRoute,
   ApiPublicV1AssetsRoute: ApiPublicV1AssetsRoute,
   ApiPublicV1PricingRoute: ApiPublicV1PricingRoute,
   ApiPublicV1ProductsRoute: ApiPublicV1ProductsRouteWithChildren,
