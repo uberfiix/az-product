@@ -4,8 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import {
   Package, CheckCircle2, Clock, AlertTriangle, Image, DollarSign,
-  Truck, Network, Copy, ArrowLeft,
+  Truck, Network, Copy, ArrowLeft, History, TrendingUp,
 } from "lucide-react";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, BarChart, Bar, Legend,
+} from "recharts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "لوحة التحكم — Alazab PAOP" }] }),
@@ -56,21 +60,77 @@ async function fetchTypeBreakdown() {
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
 }
 
+async function fetchStatusDistribution() {
+  const { data } = await supabase.from("products").select("status");
+  const counts: Record<string, number> = {};
+  (data ?? []).forEach((r: any) => {
+    const k = r.status || "unknown";
+    counts[k] = (counts[k] ?? 0) + 1;
+  });
+  return Object.entries(counts).map(([name, value]) => ({ name, value }));
+}
+
+async function fetchMonthlyActivity() {
+  const { data } = await supabase.from("products").select("created_at").order("created_at", { ascending: true });
+  const months: Record<string, number> = {};
+  (data ?? []).forEach((r: any) => {
+    const date = new Date(r.created_at);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    months[key] = (months[key] ?? 0) + 1;
+  });
+  return Object.entries(months).slice(-12).map(([month, count]) => ({ month, count }));
+}
+
+async function fetchRecentAuditLogs() {
+  const { data } = await supabase
+    .from("audit_logs")
+    .select("id, action, entity_type, created_at")
+    .order("created_at", { ascending: false })
+    .limit(5);
+  return data ?? [];
+}
+
 function Dashboard() {
   const { data: stats } = useQuery({ queryKey: ["stats"], queryFn: fetchStats });
   const { data: recent } = useQuery({ queryKey: ["recent"], queryFn: fetchRecent });
   const { data: families } = useQuery({ queryKey: ["families"], queryFn: fetchTypeBreakdown });
+  const { data: statusDist } = useQuery({ queryKey: ["status-dist"], queryFn: fetchStatusDistribution });
+  const { data: monthlyActivity } = useQuery({ queryKey: ["monthly-activity"], queryFn: fetchMonthlyActivity });
+  const { data: auditLogs } = useQuery({ queryKey: ["recent-audit"], queryFn: fetchRecentAuditLogs });
 
   const kpis = [
-    { label: "إجمالي البنود", value: stats?.products, icon: Package, tone: "primary" },
+    { label: "اجمالي البنود", value: stats?.products, icon: Package, tone: "primary" },
     { label: "بنود معتمدة", value: stats?.approved, icon: CheckCircle2, tone: "success" },
     { label: "مسودات", value: stats?.draft, icon: Clock, tone: "muted" },
     { label: "تحتاج مراجعة", value: stats?.needsReview, icon: AlertTriangle, tone: "warning" },
-    { label: "الأصول الرقمية", value: stats?.assets, icon: Image, tone: "primary" },
-    { label: "سجلات الأسعار", value: stats?.prices, icon: DollarSign, tone: "primary" },
+    { label: "الاصول الرقمية", value: stats?.assets, icon: Image, tone: "primary" },
+    { label: "سجلات الاسعار", value: stats?.prices, icon: DollarSign, tone: "primary" },
     { label: "الموردون", value: stats?.suppliers, icon: Truck, tone: "primary" },
     { label: "تكاملات API", value: stats?.integrations, icon: Network, tone: "primary" },
   ];
+
+  const statusColors: Record<string, string> = {
+    approved: "#10b981",
+    draft: "#6b7280",
+    needs_review: "#f59e0b",
+    rejected: "#ef4444",
+    archived: "#9ca3af",
+  };
+
+  const statusLabels: Record<string, string> = {
+    approved: "معتمد",
+    draft: "مسودة",
+    needs_review: "مراجعة",
+    rejected: "مرفوض",
+    archived: "مؤرشف",
+  };
+
+  const actionLabels: Record<string, string> = {
+    create: "انشاء",
+    update: "تحديث",
+    delete: "حذف",
+    approve: "اعتماد",
+  };
 
   return (
     <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
@@ -98,6 +158,75 @@ function Dashboard() {
             </div>
           </Card>
         ))}
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        {/* Monthly Activity Chart */}
+        <Card className="lg:col-span-2 p-5 surface-elevated border-0">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2">
+              <TrendingUp className="size-4" />
+              نشاط الاضافة الشهري
+            </h3>
+          </div>
+          <div className="h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyActivity ?? []}>
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#c9a227" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#c9a227" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e5e5", borderRadius: "8px" }}
+                  labelStyle={{ fontWeight: "bold" }}
+                />
+                <Area type="monotone" dataKey="count" stroke="#c9a227" fillOpacity={1} fill="url(#colorCount)" name="عدد البنود" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Status Distribution Pie Chart */}
+        <Card className="p-5 surface-elevated border-0">
+          <h3 className="font-bold mb-4">توزيع الحالات</h3>
+          <div className="h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusDist ?? []}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={70}
+                  paddingAngle={2}
+                  dataKey="value"
+                  nameKey="name"
+                >
+                  {(statusDist ?? []).map((entry: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={statusColors[entry.name] || "#6b7280"} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value: number, name: string) => [value, statusLabels[name] || name]}
+                  contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e5e5", borderRadius: "8px" }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center mt-2">
+            {(statusDist ?? []).map((s: any) => (
+              <div key={s.name} className="flex items-center gap-1 text-xs">
+                <div className="size-2 rounded-full" style={{ backgroundColor: statusColors[s.name] || "#6b7280" }} />
+                <span>{statusLabels[s.name] || s.name}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4">
@@ -152,9 +281,38 @@ function Dashboard() {
           <h3 className="font-bold">حوكمة البيانات</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          النظام يلتزم بسياسات صارمة: لا حذف نهائي، كل تعديل مسجَّل في audit_logs، التصدير محصور بالبنود
-          المعتمدة، تعديل الأسعار يحفظ التاريخ تلقائياً، ولا يتم اعتماد بند بدون البيانات الأساسية الكاملة.
+          النظام يلتزم بسياسات صارمة: لا حذف نهائي، كل تعديل مسجل في audit_logs، التصدير محصور بالبنود
+          المعتمدة، تعديل الاسعار يحفظ التاريخ تلقائيا، ولا يتم اعتماد بند بدون البيانات الاساسية الكاملة.
         </p>
+      </Card>
+
+      {/* Recent Audit Logs */}
+      <Card className="p-5 surface-elevated border-0">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold flex items-center gap-2">
+            <History className="size-4" />
+            اخر سجلات التدقيق
+          </h3>
+          <Link to="/audit-logs" className="text-xs text-accent hover:underline">عرض الكل</Link>
+        </div>
+        <div className="divide-y">
+          {(auditLogs ?? []).map((log: any) => (
+            <div key={log.id} className="py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-0.5 rounded bg-accent/15 text-accent">
+                  {actionLabels[log.action] || log.action}
+                </span>
+                <span className="text-sm">{log.entity_type}</span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {new Date(log.created_at).toLocaleDateString("ar")}
+              </span>
+            </div>
+          ))}
+          {(!auditLogs || auditLogs.length === 0) && (
+            <div className="py-4 text-center text-muted-foreground text-sm">لا توجد سجلات حديثة</div>
+          )}
+        </div>
       </Card>
     </div>
   );
