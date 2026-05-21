@@ -47,7 +47,7 @@ export async function logCall(opts: {
       status_code: opts.status,
       ip_address: opts.request.headers.get("cf-connecting-ip") ?? opts.request.headers.get("x-forwarded-for"),
       user_agent: opts.request.headers.get("user-agent"),
-      request_payload: opts.payload ?? null,
+      request_payload: (opts.payload ?? null) as never,
       error_message: opts.error ?? null,
       response_time_ms: elapsed,
     });
