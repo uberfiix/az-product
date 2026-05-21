@@ -65,15 +65,15 @@ export function RequestForm({
           {
             title: data.title,
             description: data.description,
-            request_type: data.request_type,
-            priority: data.priority,
+            request_type: data.request_type as "product" | "service" | "material" | "pricing_inquiry" | "supplier_connection",
+            priority: data.priority as "low" | "medium" | "high" | "urgent",
             category: data.category || null,
             quantity: data.quantity ? parseInt(data.quantity) : null,
             estimated_budget: data.estimated_budget
               ? parseFloat(data.estimated_budget)
               : null,
-            status: "open",
-          },
+            status: "open" as "open" | "in_review" | "approved" | "rejected",
+          } as any,
         ])
         .select("id")
         .single();

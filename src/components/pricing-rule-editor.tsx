@@ -214,8 +214,9 @@ export function PricingRuleEditor({
                     setFormData({
                       ...formData,
                       condition: {
-                        ...formData?.condition,
-                        field: v as any,
+                        field: v as "product_code" | "quantity" | "supplier" | "category" | "season",
+                        operator: formData?.condition?.operator || "equals",
+                        value: formData?.condition?.value || "",
                       },
                     })
                   }
@@ -241,8 +242,9 @@ export function PricingRuleEditor({
                     setFormData({
                       ...formData,
                       condition: {
-                        ...formData?.condition,
-                        operator: v as any,
+                        field: formData?.condition?.field || "quantity",
+                        operator: v as "equals" | "greater_than" | "less_than" | "between" | "contains",
+                        value: formData?.condition?.value || "",
                       },
                     })
                   }
@@ -273,7 +275,8 @@ export function PricingRuleEditor({
                     setFormData({
                       ...formData,
                       condition: {
-                        ...formData?.condition,
+                        field: formData?.condition?.field || "quantity",
+                        operator: formData?.condition?.operator || "equals",
                         value: e.target.value,
                       },
                     })
@@ -292,8 +295,9 @@ export function PricingRuleEditor({
                     setFormData({
                       ...formData,
                       adjustment: {
-                        ...formData?.adjustment,
-                        type: v as "percentage" | "fixed",
+                        type: v as "fixed" | "percentage",
+                        value: formData?.adjustment?.value || 0,
+                        direction: formData?.adjustment?.direction || "increase",
                       },
                     })
                   }
@@ -316,7 +320,8 @@ export function PricingRuleEditor({
                     setFormData({
                       ...formData,
                       adjustment: {
-                        ...formData?.adjustment,
+                        type: formData?.adjustment?.type || "fixed",
+                        value: formData?.adjustment?.value || 0,
                         direction: v as "increase" | "decrease",
                       },
                     })
@@ -336,14 +341,14 @@ export function PricingRuleEditor({
                 <Label className="text-xs">القيمة</Label>
                 <Input
                   type="number"
-                  placeholder="10"
-                  value={formData?.adjustment?.value || ""}
+                  value={formData?.adjustment?.value || 0}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       adjustment: {
-                        ...formData?.adjustment,
-                        value: parseFloat(e.target.value),
+                        type: formData?.adjustment?.type || "fixed",
+                        value: parseFloat(e.target.value) || 0,
+                        direction: formData?.adjustment?.direction || "increase",
                       },
                     })
                   }

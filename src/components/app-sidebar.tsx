@@ -56,6 +56,14 @@ const sections = [
     ],
   },
   {
+    label: "الطلبات والمبيعات",
+    items: [
+      { title: "طلبات المنتجات", to: "/requests", icon: MessageSquare, phase: 3 },
+      { title: "طلبات العروض", to: "/quote-requests", icon: FileText, phase: 3 },
+      { title: "طلبات التصنيع", to: "/manufacturing-orders", icon: Package, phase: 4 },
+    ],
+  },
+  {
     label: "العمليات",
     items: [
       { title: "سجل التدقيق", to: "/audit-logs", icon: History, phase: 1 },
@@ -63,6 +71,7 @@ const sections = [
       { title: "مركز الاستيراد", to: "/import", icon: Upload, phase: 4 },
       { title: "مركز التصدير", to: "/export", icon: Download, phase: 4 },
       { title: "مركز API", to: "/api-center", icon: Network, phase: 4 },
+      { title: "التكاملات والتوصيلات", to: "/integrations", icon: Network, phase: 5 },
       { title: "مساعد AI", to: "/ai-review", icon: Sparkles, phase: 1 },
     ],
   },

@@ -58,18 +58,18 @@ export function SupplierForm({
   const onSubmit = async (data: SupplierFormData) => {
     setIsLoading(true);
     try {
-      const payload = {
+      const payload: any = {
         name_ar: data.name_ar,
         name_en: data.name_en,
         supplier_code: data.supplier_code,
         category: data.category,
-        tier: data.tier,
+        tier: data.tier as "first_tier" | "second_tier" | "backup" | "local" | "imported" | "internal_workshop" | "factory" | "marketplace",
         contact_person: data.contact_person || null,
         email: data.email || null,
         phone: data.phone || null,
         address: data.address || null,
         notes: data.notes || null,
-        status: "active" as const,
+        status: "active",
       };
 
       if (initialData?.id) {
