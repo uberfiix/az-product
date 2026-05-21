@@ -4,8 +4,13 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
+import { Search, Download, Filter, X, FileSpreadsheet, FileJson } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/products/")({
   head: () => ({ meta: [{ title: "المنتجات والخدمات — Alazab PAOP" }] }),
@@ -14,21 +19,63 @@ export const Route = createFileRoute("/_authenticated/products/")({
 
 const PAGE = 50;
 
+interface Filters {
+  q: string;
+  status: string;
+  itemType: string;
+  gpcFamily: string;
+  sector: string;
+  confidence: string;
+}
+
 function ProductsList() {
-  const [q, setQ] = useState("");
-  const [status, setStatus] = useState<string>("all");
+  const [filters, setFilters] = useState<Filters>({
+    q: "",
+    status: "all",
+    itemType: "all",
+    gpcFamily: "all",
+    sector: "all",
+    confidence: "all",
+  });
   const [page, setPage] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([
+    "az_code", "name_ar", "name_en", "status", "gpc_family", "sector_ar"
+  ]);
+
+  // Fetch filter options
+  const { data: filterOptions } = useQuery({
+    queryKey: ["product-filter-options"],
+    queryFn: async () => {
+      const [families, sectors] = await Promise.all([
+        supabase.from("products").select("gpc_family").not("gpc_family", "is", null),
+        supabase.from("products").select("sector_ar").not("sector_ar", "is", null),
+      ]);
+
+      const uniqueFamilies = [...new Set((families.data ?? []).map((r: any) => r.gpc_family))].filter(Boolean);
+      const uniqueSectors = [...new Set((sectors.data ?? []).map((r: any) => r.sector_ar))].filter(Boolean);
+
+      return { families: uniqueFamilies, sectors: uniqueSectors };
+    },
+  });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", q, status, page],
+    queryKey: ["products", filters, page],
     queryFn: async () => {
       let query = supabase
         .from("products")
         .select("id, az_code, egs_code, name_ar, name_en, item_type, status, gpc_family, sector_ar, confidence_level", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(page * PAGE, page * PAGE + PAGE - 1);
-      if (q) query = query.or(`name_ar.ilike.%${q}%,name_en.ilike.%${q}%,az_code.ilike.%${q}%`);
-      if (status !== "all") query = query.eq("status", status as any);
+
+      if (filters.q) query = query.or(`name_ar.ilike.%${filters.q}%,name_en.ilike.%${filters.q}%,az_code.ilike.%${filters.q}%`);
+      if (filters.status !== "all") query = query.eq("status", filters.status as any);
+      if (filters.itemType !== "all") query = query.eq("item_type", filters.itemType as any);
+      if (filters.gpcFamily !== "all") query = query.eq("gpc_family", filters.gpcFamily);
+      if (filters.sector !== "all") query = query.eq("sector_ar", filters.sector);
+      if (filters.confidence !== "all") query = query.eq("confidence_level", filters.confidence);
+
       const { data, count, error } = await query;
       if (error) throw error;
       return { rows: data ?? [], count: count ?? 0 };
@@ -37,6 +84,100 @@ function ProductsList() {
 
   const total = data?.count ?? 0;
   const pages = Math.ceil(total / PAGE);
+
+  const activeFiltersCount = Object.entries(filters).filter(
+    ([key, value]) => key !== "q" && value !== "all"
+  ).length;
+
+  const clearFilters = () => {
+    setFilters({
+      q: "",
+      status: "all",
+      itemType: "all",
+      gpcFamily: "all",
+      sector: "all",
+      confidence: "all",
+    });
+    setPage(0);
+  };
+
+  const exportColumns = [
+    { key: "az_code", label: "AZ Code" },
+    { key: "egs_code", label: "EGS Code" },
+    { key: "name_ar", label: "الاسم عربي" },
+    { key: "name_en", label: "الاسم انجليزي" },
+    { key: "item_type", label: "النوع" },
+    { key: "status", label: "الحالة" },
+    { key: "gpc_family", label: "العائلة" },
+    { key: "sector_ar", label: "القطاع" },
+    { key: "confidence_level", label: "الثقة" },
+    { key: "description_ar", label: "الوصف" },
+  ];
+
+  const exportData = async (format: "csv" | "json") => {
+    setExportLoading(true);
+    try {
+      let query = supabase
+        .from("products")
+        .select(selectedColumns.join(", "))
+        .eq("status", "approved")
+        .order("az_code", { ascending: true });
+
+      if (filters.gpcFamily !== "all") query = query.eq("gpc_family", filters.gpcFamily);
+      if (filters.sector !== "all") query = query.eq("sector_ar", filters.sector);
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        toast.error("لا توجد بيانات للتصدير");
+        return;
+      }
+
+      let content: string;
+      let filename: string;
+      let mimeType: string;
+
+      if (format === "csv") {
+        const headers = selectedColumns.map(col => 
+          exportColumns.find(c => c.key === col)?.label || col
+        );
+        const csvRows = [headers.join(",")];
+        data.forEach((row: any) => {
+          const values = selectedColumns.map(col => {
+            const val = row[col];
+            if (val === null || val === undefined) return "";
+            const strVal = String(val).replace(/"/g, '""');
+            return `"${strVal}"`;
+          });
+          csvRows.push(values.join(","));
+        });
+        content = "\uFEFF" + csvRows.join("\n"); // BOM for Excel Arabic support
+        filename = `products_export_${new Date().toISOString().split("T")[0]}.csv`;
+        mimeType = "text/csv;charset=utf-8";
+      } else {
+        content = JSON.stringify(data, null, 2);
+        filename = `products_export_${new Date().toISOString().split("T")[0]}.json`;
+        mimeType = "application/json";
+      }
+
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success(`تم تصدير ${data.length} بند بنجاح`);
+    } catch (error) {
+      toast.error("حدث خطا اثناء التصدير");
+    } finally {
+      setExportLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-4 max-w-[1600px] mx-auto">
@@ -47,21 +188,78 @@ function ProductsList() {
             <span className="num">{total.toLocaleString("en-US")}</span> بند في الكتالوج
           </p>
         </div>
+        <div className="flex gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" disabled={exportLoading}>
+                <Download className="size-4 ml-1" />
+                تصدير
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">اختر الاعمدة للتصدير</h4>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    سيتم تصدير البنود المعتمدة فقط
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {exportColumns.map((col) => (
+                      <label key={col.key} className="flex items-center gap-2 text-sm">
+                        <Checkbox
+                          checked={selectedColumns.includes(col.key)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedColumns([...selectedColumns, col.key]);
+                            } else {
+                              setSelectedColumns(selectedColumns.filter(c => c !== col.key));
+                            }
+                          }}
+                        />
+                        {col.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => exportData("csv")}
+                    disabled={selectedColumns.length === 0 || exportLoading}
+                  >
+                    <FileSpreadsheet className="size-4 ml-1" />
+                    CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => exportData("json")}
+                    disabled={selectedColumns.length === 0 || exportLoading}
+                  >
+                    <FileJson className="size-4 ml-1" />
+                    JSON
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       <Card className="p-4 surface-elevated border-0">
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-3 flex-wrap items-center">
           <div className="relative flex-1 min-w-[260px]">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder="بحث بالاسم أو AZ Code..."
-              value={q}
-              onChange={(e) => { setQ(e.target.value); setPage(0); }}
+              placeholder="بحث بالاسم او AZ Code..."
+              value={filters.q}
+              onChange={(e) => { setFilters({ ...filters, q: e.target.value }); setPage(0); }}
               className="pr-9"
             />
           </div>
-          <Select value={status} onValueChange={(v) => { setStatus(v); setPage(0); }}>
-            <SelectTrigger className="w-[180px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
+          <Select value={filters.status} onValueChange={(v) => { setFilters({ ...filters, status: v }); setPage(0); }}>
+            <SelectTrigger className="w-[150px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">كل الحالات</SelectItem>
               <SelectItem value="approved">معتمد</SelectItem>
@@ -71,6 +269,94 @@ function ProductsList() {
               <SelectItem value="archived">مؤرشف</SelectItem>
             </SelectContent>
           </Select>
+
+          <Popover open={showFilters} onOpenChange={setShowFilters}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="relative">
+                <Filter className="size-4 ml-1" />
+                فلاتر متقدمة
+                {activeFiltersCount > 0 && (
+                  <span className="absolute -top-1 -left-1 size-5 bg-accent text-accent-foreground text-xs rounded-full grid place-items-center num">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold">فلاتر متقدمة</h4>
+                  {activeFiltersCount > 0 && (
+                    <Button variant="ghost" size="sm" onClick={clearFilters}>
+                      <X className="size-3 ml-1" />
+                      مسح الكل
+                    </Button>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-xs">نوع البند</Label>
+                    <Select value={filters.itemType} onValueChange={(v) => { setFilters({ ...filters, itemType: v }); setPage(0); }}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">الكل</SelectItem>
+                        <SelectItem value="product">منتج</SelectItem>
+                        <SelectItem value="service">خدمة</SelectItem>
+                        <SelectItem value="bundle">حزمة</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">العائلة (GPC)</Label>
+                    <Select value={filters.gpcFamily} onValueChange={(v) => { setFilters({ ...filters, gpcFamily: v }); setPage(0); }}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">كل العائلات</SelectItem>
+                        {(filterOptions?.families ?? []).map((f) => (
+                          <SelectItem key={f} value={f}>{f}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">القطاع</Label>
+                    <Select value={filters.sector} onValueChange={(v) => { setFilters({ ...filters, sector: v }); setPage(0); }}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">كل القطاعات</SelectItem>
+                        {(filterOptions?.sectors ?? []).map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">مستوى الثقة</Label>
+                    <Select value={filters.confidence} onValueChange={(v) => { setFilters({ ...filters, confidence: v }); setPage(0); }}>
+                      <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">الكل</SelectItem>
+                        <SelectItem value="high">عالي</SelectItem>
+                        <SelectItem value="medium">متوسط</SelectItem>
+                        <SelectItem value="low">منخفض</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {activeFiltersCount > 0 && (
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              <X className="size-4 ml-1" />
+              مسح الفلاتر
+            </Button>
+          )}
         </div>
       </Card>
 
@@ -102,7 +388,18 @@ function ProductsList() {
                   <td className="p-3 text-muted-foreground" dir="ltr">{p.name_en}</td>
                   <td className="p-3 text-xs">{p.gpc_family || "—"}</td>
                   <td className="p-3 text-xs">{p.sector_ar || "—"}</td>
-                  <td className="p-3 text-xs">{p.confidence_level || "—"}</td>
+                  <td className="p-3 text-xs">
+                    {p.confidence_level && (
+                      <span className={`px-2 py-0.5 rounded text-[10px] ${
+                        p.confidence_level === "high" ? "bg-success/15 text-success" :
+                        p.confidence_level === "medium" ? "bg-warning/15 text-warning" :
+                        "bg-destructive/15 text-destructive"
+                      }`}>
+                        {p.confidence_level === "high" ? "عالي" : p.confidence_level === "medium" ? "متوسط" : "منخفض"}
+                      </span>
+                    )}
+                    {!p.confidence_level && "—"}
+                  </td>
                   <td className="p-3"><StatusBadge status={p.status} /></td>
                 </tr>
               ))}
@@ -112,7 +409,7 @@ function ProductsList() {
 
         <div className="flex items-center justify-between p-3 border-t bg-secondary/30 text-xs">
           <div className="text-muted-foreground num" dir="ltr">
-            Page {page + 1} / {pages || 1} · {total.toLocaleString("en-US")} rows
+            Page {page + 1} / {pages || 1} - {total.toLocaleString("en-US")} rows
           </div>
           <div className="flex gap-2">
             <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1 rounded border disabled:opacity-50">السابق</button>

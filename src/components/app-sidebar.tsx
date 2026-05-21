@@ -2,7 +2,7 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Package, Image, FileText, DollarSign, Truck,
   Warehouse, Copy, Upload, Download, Network, Sparkles, Settings, LogOut,
-  MessageCircle,
+  MessageCircle, History,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -40,7 +40,8 @@ const sections = [
   {
     label: "العمليات",
     items: [
-      { title: "مراجعة التكرار", to: "/duplicates", icon: Copy, phase: 5 },
+      { title: "سجل التدقيق", to: "/audit-logs", icon: History, phase: 1 },
+      { title: "مراجعة التكرار", to: "/duplicates", icon: Copy, phase: 1 },
       { title: "مركز الاستيراد", to: "/import", icon: Upload, phase: 4 },
       { title: "مركز التصدير", to: "/export", icon: Download, phase: 4 },
       { title: "مركز API", to: "/api-center", icon: Network, phase: 4 },
