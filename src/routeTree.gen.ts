@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 import { Route as AuthenticatedQuoteRequestsRouteImport } from './routes/_authenticated/quote-requests'
 import { Route as AuthenticatedManufacturingOrdersRouteImport } from './routes/_authenticated/manufacturing-orders'
+import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAuditLogsRouteImport } from './routes/_authenticated/audit-logs'
 import { Route as AuthenticatedAiReviewRouteImport } from './routes/_authenticated/ai-review'
@@ -70,6 +71,12 @@ const AuthenticatedManufacturingOrdersRoute =
   AuthenticatedManufacturingOrdersRouteImport.update({
     id: '/manufacturing-orders',
     path: '/manufacturing-orders',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedIntegrationsRoute =
+  AuthenticatedIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -218,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/integrations': typeof AuthenticatedIntegrationsRoute
   '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
   '/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/support': typeof AuthenticatedSupportRoute
@@ -250,6 +258,7 @@ export interface FileRoutesByTo {
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/integrations': typeof AuthenticatedIntegrationsRoute
   '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
   '/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/support': typeof AuthenticatedSupportRoute
@@ -284,6 +293,7 @@ export interface FileRoutesById {
   '/_authenticated/ai-review': typeof AuthenticatedAiReviewRoute
   '/_authenticated/audit-logs': typeof AuthenticatedAuditLogsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
   '/_authenticated/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
   '/_authenticated/quote-requests': typeof AuthenticatedQuoteRequestsRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/ai-review'
     | '/audit-logs'
     | '/dashboard'
+    | '/integrations'
     | '/manufacturing-orders'
     | '/quote-requests'
     | '/support'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/ai-review'
     | '/audit-logs'
     | '/dashboard'
+    | '/integrations'
     | '/manufacturing-orders'
     | '/quote-requests'
     | '/support'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-review'
     | '/_authenticated/audit-logs'
     | '/_authenticated/dashboard'
+    | '/_authenticated/integrations'
     | '/_authenticated/manufacturing-orders'
     | '/_authenticated/quote-requests'
     | '/_authenticated/support'
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       path: '/manufacturing-orders'
       fullPath: '/manufacturing-orders'
       preLoaderRoute: typeof AuthenticatedManufacturingOrdersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/integrations': {
+      id: '/_authenticated/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof AuthenticatedIntegrationsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -649,6 +669,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAiReviewRoute: typeof AuthenticatedAiReviewRoute
   AuthenticatedAuditLogsRoute: typeof AuthenticatedAuditLogsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedIntegrationsRoute: typeof AuthenticatedIntegrationsRoute
   AuthenticatedManufacturingOrdersRoute: typeof AuthenticatedManufacturingOrdersRoute
   AuthenticatedQuoteRequestsRoute: typeof AuthenticatedQuoteRequestsRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
@@ -672,6 +693,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiReviewRoute: AuthenticatedAiReviewRoute,
   AuthenticatedAuditLogsRoute: AuthenticatedAuditLogsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedIntegrationsRoute: AuthenticatedIntegrationsRoute,
   AuthenticatedManufacturingOrdersRoute: AuthenticatedManufacturingOrdersRoute,
   AuthenticatedQuoteRequestsRoute: AuthenticatedQuoteRequestsRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
