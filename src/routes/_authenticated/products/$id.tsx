@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, Image as ImageIcon, DollarSign, Truck, Sparkles, ScrollText } from "lucide-react";
+import { ProductAssetsTab } from "@/components/product-assets-tab";
 
 export const Route = createFileRoute("/_authenticated/products/$id")({
   head: () => ({ meta: [{ title: "تفاصيل البند — Alazab PAOP" }] }),
@@ -88,13 +89,17 @@ function ProductDetails() {
           </Card>
         </TabsContent>
 
-        {["assets", "pricing", "suppliers", "ai", "audit"].map((t, i) => (
+        <TabsContent value="assets" className="mt-4">
+          <ProductAssetsTab productId={p.id} azCode={p.az_code} />
+        </TabsContent>
+
+        {["pricing", "suppliers", "ai", "audit"].map((t) => (
           <TabsContent key={t} value={t} className="mt-4">
             <Card className="p-12 surface-elevated border-0 text-center">
               <div className="inline-block size-12 rounded-full bg-accent/15 grid place-items-center mb-3">
                 <Sparkles className="size-5 text-accent" />
               </div>
-              <h3 className="font-bold mb-1">قيد البناء — المرحلة {t === "assets" || t === "audit" ? 2 : t === "pricing" || t === "suppliers" ? 3 : 5}</h3>
+              <h3 className="font-bold mb-1">قيد البناء — المرحلة {t === "audit" ? 2 : t === "pricing" || t === "suppliers" ? 3 : 5}</h3>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
                 هذا التاب جزء من المرحلة القادمة في خطة البناء. البنية البرمجية وقاعدة البيانات جاهزتان لاستقبال الميزة.
               </p>
