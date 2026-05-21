@@ -23,6 +23,7 @@ const sections = [
     items: [
       { title: "المنتجات والخدمات", to: "/products", icon: Package, phase: 1 },
       { title: "إدارة الأصول", to: "/assets", icon: Image, phase: 1 },
+      { title: "أصول غير مرتبطة", to: "/assets/unlinked", icon: Copy, phase: 2 },
       { title: "إدارة المحتوى", to: "/content", icon: FileText, phase: 2 },
     ],
   },

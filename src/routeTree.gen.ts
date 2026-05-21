@@ -16,6 +16,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedAssetsIndexRouteImport } from './routes/_authenticated/assets/index'
 import { Route as AuthenticatedProductsIdRouteImport } from './routes/_authenticated/products/$id'
+import { Route as AuthenticatedAssetsUnlinkedRouteImport } from './routes/_authenticated/assets/unlinked'
+import { Route as AuthenticatedAssetsDuplicatesRouteImport } from './routes/_authenticated/assets/duplicates'
 import { Route as AuthenticatedAssetsBulkUploadRouteImport } from './routes/_authenticated/assets/bulk-upload'
 
 const LoginRoute = LoginRouteImport.update({
@@ -54,6 +56,18 @@ const AuthenticatedProductsIdRoute = AuthenticatedProductsIdRouteImport.update({
   path: '/products/$id',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAssetsUnlinkedRoute =
+  AuthenticatedAssetsUnlinkedRouteImport.update({
+    id: '/assets/unlinked',
+    path: '/assets/unlinked',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAssetsDuplicatesRoute =
+  AuthenticatedAssetsDuplicatesRouteImport.update({
+    id: '/assets/duplicates',
+    path: '/assets/duplicates',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAssetsBulkUploadRoute =
   AuthenticatedAssetsBulkUploadRouteImport.update({
     id: '/assets/bulk-upload',
@@ -66,6 +80,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
+  '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
+  '/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/products/$id': typeof AuthenticatedProductsIdRoute
   '/assets/': typeof AuthenticatedAssetsIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
@@ -75,6 +91,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
+  '/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
+  '/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/products/$id': typeof AuthenticatedProductsIdRoute
   '/assets': typeof AuthenticatedAssetsIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
@@ -86,6 +104,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/assets/bulk-upload': typeof AuthenticatedAssetsBulkUploadRoute
+  '/_authenticated/assets/duplicates': typeof AuthenticatedAssetsDuplicatesRoute
+  '/_authenticated/assets/unlinked': typeof AuthenticatedAssetsUnlinkedRoute
   '/_authenticated/products/$id': typeof AuthenticatedProductsIdRoute
   '/_authenticated/assets/': typeof AuthenticatedAssetsIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
@@ -97,6 +117,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/assets/bulk-upload'
+    | '/assets/duplicates'
+    | '/assets/unlinked'
     | '/products/$id'
     | '/assets/'
     | '/products/'
@@ -106,6 +128,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/assets/bulk-upload'
+    | '/assets/duplicates'
+    | '/assets/unlinked'
     | '/products/$id'
     | '/assets'
     | '/products'
@@ -116,6 +140,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/dashboard'
     | '/_authenticated/assets/bulk-upload'
+    | '/_authenticated/assets/duplicates'
+    | '/_authenticated/assets/unlinked'
     | '/_authenticated/products/$id'
     | '/_authenticated/assets/'
     | '/_authenticated/products/'
@@ -178,6 +204,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/assets/unlinked': {
+      id: '/_authenticated/assets/unlinked'
+      path: '/assets/unlinked'
+      fullPath: '/assets/unlinked'
+      preLoaderRoute: typeof AuthenticatedAssetsUnlinkedRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/assets/duplicates': {
+      id: '/_authenticated/assets/duplicates'
+      path: '/assets/duplicates'
+      fullPath: '/assets/duplicates'
+      preLoaderRoute: typeof AuthenticatedAssetsDuplicatesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/assets/bulk-upload': {
       id: '/_authenticated/assets/bulk-upload'
       path: '/assets/bulk-upload'
@@ -191,6 +231,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedAssetsBulkUploadRoute: typeof AuthenticatedAssetsBulkUploadRoute
+  AuthenticatedAssetsDuplicatesRoute: typeof AuthenticatedAssetsDuplicatesRoute
+  AuthenticatedAssetsUnlinkedRoute: typeof AuthenticatedAssetsUnlinkedRoute
   AuthenticatedProductsIdRoute: typeof AuthenticatedProductsIdRoute
   AuthenticatedAssetsIndexRoute: typeof AuthenticatedAssetsIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
@@ -199,6 +241,8 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedAssetsBulkUploadRoute: AuthenticatedAssetsBulkUploadRoute,
+  AuthenticatedAssetsDuplicatesRoute: AuthenticatedAssetsDuplicatesRoute,
+  AuthenticatedAssetsUnlinkedRoute: AuthenticatedAssetsUnlinkedRoute,
   AuthenticatedProductsIdRoute: AuthenticatedProductsIdRoute,
   AuthenticatedAssetsIndexRoute: AuthenticatedAssetsIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
