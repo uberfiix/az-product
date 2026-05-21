@@ -11,7 +11,6 @@ function sanitize(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
-/** Upload a single File → creates asset row + product_assets link. */
 export async function uploadAndLinkAsset(opts: {
   file: File;
   productId: string;
@@ -27,7 +26,6 @@ export async function uploadAndLinkAsset(opts: {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 1. upload to storage
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
     .upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });
@@ -35,7 +33,6 @@ export async function uploadAndLinkAsset(opts: {
 
   const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
 
-  // 2. insert asset
   const { data: asset, error: aErr } = await supabase
     .from("assets")
     .insert({
@@ -53,7 +50,6 @@ export async function uploadAndLinkAsset(opts: {
     .single();
   if (aErr) throw new Error(`Asset row: ${aErr.message}`);
 
-  // 3. link product ↔ asset
   const { error: lErr } = await supabase.from("product_assets").insert({
     product_id: productId,
     asset_id: asset.id,
@@ -72,5 +68,35 @@ export async function deleteAssetLink(linkId: string) {
 
 export async function setAssetRole(linkId: string, role: AssetRole) {
   const { error } = await supabase.from("product_assets").update({ asset_role: role }).eq("id", linkId);
+  if (error) throw error;
+}
+
+/** Promote a link to main_image, demote the existing main (if any) to gallery. */
+export async function promoteToMain(productId: string, linkId: string) {
+  const { data: current } = await supabase
+    .from("product_assets")
+    .select("id")
+    .eq("product_id", productId)
+    .eq("asset_role", "main_image")
+    .maybeSingle();
+  if (current && current.id !== linkId) {
+    await supabase.from("product_assets").update({ asset_role: "gallery" }).eq("id", current.id);
+  }
+  const { error } = await supabase.from("product_assets").update({ asset_role: "main_image" }).eq("id", linkId);
+  if (error) throw error;
+}
+
+/** Persist new ordering: pass linkIds in display order. */
+export async function reorderAssets(linkIds: string[]) {
+  await Promise.all(
+    linkIds.map((id, idx) =>
+      supabase.from("product_assets").update({ sort_order: idx }).eq("id", id)
+    )
+  );
+}
+
+/** Soft-delete an asset (status='archived'); links remain for audit. */
+export async function softDeleteAsset(assetId: string) {
+  const { error } = await supabase.from("assets").update({ status: "archived" }).eq("id", assetId);
   if (error) throw error;
 }
