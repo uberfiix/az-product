@@ -22,7 +22,7 @@ const sections = [
     label: "البيانات الأساسية",
     items: [
       { title: "المنتجات والخدمات", to: "/products", icon: Package, phase: 1 },
-      { title: "إدارة الأصول", to: "/assets", icon: Image, phase: 2 },
+      { title: "إدارة الأصول", to: "/assets", icon: Image, phase: 1 },
       { title: "إدارة المحتوى", to: "/content", icon: FileText, phase: 2 },
     ],
   },
@@ -86,7 +86,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 {sec.items.map((item) => {
                   const active = currentPath === item.to || currentPath.startsWith(item.to + "/");
-                  const built = item.phase === 1;
+                  const built = item.phase <= 2;
                   return (
                     <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
