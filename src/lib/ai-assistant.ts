@@ -191,8 +191,8 @@ async function executeToolCall(
         .or(`name_ar.ilike.%${query}%,az_code.ilike.%${query}%,description_ar.ilike.%${query}%`)
         .limit(limit);
 
-      if (item_type) queryBuilder = queryBuilder.eq("item_type", item_type);
-      if (status) queryBuilder = queryBuilder.eq("status", status);
+      if (item_type) queryBuilder = queryBuilder.eq("item_type", item_type as any);
+      if (status) queryBuilder = queryBuilder.eq("status", status as any);
 
       const { data, error } = await queryBuilder;
 
@@ -329,7 +329,7 @@ ${prices
         .ilike("name", `%${query}%`)
         .limit(10);
 
-      if (tier) queryBuilder = queryBuilder.eq("supplier_tier", tier);
+      if (tier) queryBuilder = queryBuilder.eq("supplier_tier", tier as any);
 
       const { data, error } = await queryBuilder;
 
