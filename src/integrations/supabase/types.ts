@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_consumers: {
+        Row: {
+          allowed_endpoints: string[] | null
+          api_key: string
+          channel: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          last_used_at: string | null
+          name: string
+          notes: string | null
+          rate_limit_per_minute: number
+          total_requests: number
+          updated_at: string
+        }
+        Insert: {
+          allowed_endpoints?: string[] | null
+          api_key: string
+          channel: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          name: string
+          notes?: string | null
+          rate_limit_per_minute?: number
+          total_requests?: number
+          updated_at?: string
+        }
+        Update: {
+          allowed_endpoints?: string[] | null
+          api_key?: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          name?: string
+          notes?: string | null
+          rate_limit_per_minute?: number
+          total_requests?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       api_integrations: {
         Row: {
           base_url: string | null
@@ -232,6 +280,51 @@ export type Database = {
           id?: string
           status?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      export_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          export_type: string
+          file_url: string | null
+          filters: Json | null
+          format: string
+          id: string
+          status: string
+          target: string
+          total_rows: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          export_type: string
+          file_url?: string | null
+          filters?: Json | null
+          format: string
+          id?: string
+          status?: string
+          target: string
+          total_rows?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          export_type?: string
+          file_url?: string | null
+          filters?: Json | null
+          format?: string
+          id?: string
+          status?: string
+          target?: string
+          total_rows?: number | null
         }
         Relationships: []
       }
@@ -841,6 +934,65 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          channel: string | null
+          consumer_id: string | null
+          consumer_name: string | null
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          method: string
+          request_payload: Json | null
+          response_payload: Json | null
+          response_time_ms: number | null
+          status_code: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          channel?: string | null
+          consumer_id?: string | null
+          consumer_name?: string | null
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          method: string
+          request_payload?: Json | null
+          response_payload?: Json | null
+          response_time_ms?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          channel?: string | null
+          consumer_id?: string | null
+          consumer_name?: string | null
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          method?: string
+          request_payload?: Json | null
+          response_payload?: Json | null
+          response_time_ms?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_logs_consumer_id_fkey"
+            columns: ["consumer_id"]
+            isOneToOne: false
+            referencedRelation: "api_consumers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
