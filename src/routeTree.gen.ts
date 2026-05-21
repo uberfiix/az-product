@@ -17,6 +17,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedPricingIndexRouteImport } from './routes/_authenticated/pricing/index'
+import { Route as AuthenticatedImportIndexRouteImport } from './routes/_authenticated/import/index'
 import { Route as AuthenticatedExportIndexRouteImport } from './routes/_authenticated/export/index'
 import { Route as AuthenticatedAssetsIndexRouteImport } from './routes/_authenticated/assets/index'
 import { Route as AuthenticatedApiCenterIndexRouteImport } from './routes/_authenticated/api-center/index'
@@ -70,6 +71,12 @@ const AuthenticatedPricingIndexRoute =
   AuthenticatedPricingIndexRouteImport.update({
     id: '/pricing/',
     path: '/pricing/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedImportIndexRoute =
+  AuthenticatedImportIndexRouteImport.update({
+    id: '/import/',
+    path: '/import/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedExportIndexRoute =
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/api-center/': typeof AuthenticatedApiCenterIndexRoute
   '/assets/': typeof AuthenticatedAssetsIndexRoute
   '/export/': typeof AuthenticatedExportIndexRoute
+  '/import/': typeof AuthenticatedImportIndexRoute
   '/pricing/': typeof AuthenticatedPricingIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/api-center': typeof AuthenticatedApiCenterIndexRoute
   '/assets': typeof AuthenticatedAssetsIndexRoute
   '/export': typeof AuthenticatedExportIndexRoute
+  '/import': typeof AuthenticatedImportIndexRoute
   '/pricing': typeof AuthenticatedPricingIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
@@ -196,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/api-center/': typeof AuthenticatedApiCenterIndexRoute
   '/_authenticated/assets/': typeof AuthenticatedAssetsIndexRoute
   '/_authenticated/export/': typeof AuthenticatedExportIndexRoute
+  '/_authenticated/import/': typeof AuthenticatedImportIndexRoute
   '/_authenticated/pricing/': typeof AuthenticatedPricingIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/api-center/'
     | '/assets/'
     | '/export/'
+    | '/import/'
     | '/pricing/'
     | '/products/'
     | '/suppliers/'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/api-center'
     | '/assets'
     | '/export'
+    | '/import'
     | '/pricing'
     | '/products'
     | '/suppliers'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/api-center/'
     | '/_authenticated/assets/'
     | '/_authenticated/export/'
+    | '/_authenticated/import/'
     | '/_authenticated/pricing/'
     | '/_authenticated/products/'
     | '/_authenticated/suppliers/'
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing/'
       preLoaderRoute: typeof AuthenticatedPricingIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/import/': {
+      id: '/_authenticated/import/'
+      path: '/import'
+      fullPath: '/import/'
+      preLoaderRoute: typeof AuthenticatedImportIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/export/': {
@@ -437,6 +457,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedApiCenterIndexRoute: typeof AuthenticatedApiCenterIndexRoute
   AuthenticatedAssetsIndexRoute: typeof AuthenticatedAssetsIndexRoute
   AuthenticatedExportIndexRoute: typeof AuthenticatedExportIndexRoute
+  AuthenticatedImportIndexRoute: typeof AuthenticatedImportIndexRoute
   AuthenticatedPricingIndexRoute: typeof AuthenticatedPricingIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
@@ -452,6 +473,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedApiCenterIndexRoute: AuthenticatedApiCenterIndexRoute,
   AuthenticatedAssetsIndexRoute: AuthenticatedAssetsIndexRoute,
   AuthenticatedExportIndexRoute: AuthenticatedExportIndexRoute,
+  AuthenticatedImportIndexRoute: AuthenticatedImportIndexRoute,
   AuthenticatedPricingIndexRoute: AuthenticatedPricingIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
