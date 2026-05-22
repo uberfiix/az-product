@@ -7,6 +7,8 @@ import { ArrowRight, Image as ImageIcon, DollarSign, Truck, Sparkles, ScrollText
 import { ProductAssetsTab } from "@/components/product-assets-tab";
 import { ProductPricingTab } from "@/components/product-pricing-tab";
 import { ProductSuppliersTab } from "@/components/product-suppliers-tab";
+import { ProductAIReviewTab } from "@/components/product-ai-review-tab";
+
 
 export const Route = createFileRoute("/_authenticated/products/$id")({
   head: () => ({ meta: [{ title: "تفاصيل البند — Alazab PAOP" }] }),
