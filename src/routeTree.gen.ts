@@ -17,6 +17,7 @@ import { Route as AuthenticatedQuoteRequestsRouteImport } from './routes/_authen
 import { Route as AuthenticatedManufacturingOrdersRouteImport } from './routes/_authenticated/manufacturing-orders'
 import { Route as AuthenticatedIntegrationsRouteImport } from './routes/_authenticated/integrations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedContentReviewRouteImport } from './routes/_authenticated/content-review'
 import { Route as AuthenticatedAuditLogsRouteImport } from './routes/_authenticated/audit-logs'
 import { Route as AuthenticatedAiReviewRouteImport } from './routes/_authenticated/ai-review'
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
@@ -84,6 +85,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedContentReviewRoute =
+  AuthenticatedContentReviewRouteImport.update({
+    id: '/content-review',
+    path: '/content-review',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAuditLogsRoute = AuthenticatedAuditLogsRouteImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
@@ -224,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
+  '/content-review': typeof AuthenticatedContentReviewRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
@@ -257,6 +265,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/ai-review': typeof AuthenticatedAiReviewRoute
   '/audit-logs': typeof AuthenticatedAuditLogsRoute
+  '/content-review': typeof AuthenticatedContentReviewRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/integrations': typeof AuthenticatedIntegrationsRoute
   '/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
@@ -292,6 +301,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/ai-review': typeof AuthenticatedAiReviewRoute
   '/_authenticated/audit-logs': typeof AuthenticatedAuditLogsRoute
+  '/_authenticated/content-review': typeof AuthenticatedContentReviewRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/integrations': typeof AuthenticatedIntegrationsRoute
   '/_authenticated/manufacturing-orders': typeof AuthenticatedManufacturingOrdersRoute
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/ai-review'
     | '/audit-logs'
+    | '/content-review'
     | '/dashboard'
     | '/integrations'
     | '/manufacturing-orders'
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/ai-review'
     | '/audit-logs'
+    | '/content-review'
     | '/dashboard'
     | '/integrations'
     | '/manufacturing-orders'
@@ -394,6 +406,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/ai-review'
     | '/_authenticated/audit-logs'
+    | '/_authenticated/content-review'
     | '/_authenticated/dashboard'
     | '/_authenticated/integrations'
     | '/_authenticated/manufacturing-orders'
@@ -492,6 +505,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/content-review': {
+      id: '/_authenticated/content-review'
+      path: '/content-review'
+      fullPath: '/content-review'
+      preLoaderRoute: typeof AuthenticatedContentReviewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/audit-logs': {
@@ -668,6 +688,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedAiReviewRoute: typeof AuthenticatedAiReviewRoute
   AuthenticatedAuditLogsRoute: typeof AuthenticatedAuditLogsRoute
+  AuthenticatedContentReviewRoute: typeof AuthenticatedContentReviewRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIntegrationsRoute: typeof AuthenticatedIntegrationsRoute
   AuthenticatedManufacturingOrdersRoute: typeof AuthenticatedManufacturingOrdersRoute
@@ -692,6 +713,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAiReviewRoute: AuthenticatedAiReviewRoute,
   AuthenticatedAuditLogsRoute: AuthenticatedAuditLogsRoute,
+  AuthenticatedContentReviewRoute: AuthenticatedContentReviewRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIntegrationsRoute: AuthenticatedIntegrationsRoute,
   AuthenticatedManufacturingOrdersRoute: AuthenticatedManufacturingOrdersRoute,
