@@ -162,14 +162,13 @@ export const reviewProduct = createServerFn({ method: "POST" })
     if (missingCritical.length > 0) {
       if (currentStatus !== "content_incomplete" && currentStatus !== "approved") {
         newStatus = "content_incomplete";
-      } else if (currentStatus === "draft") {
-        newStatus = "content_incomplete";
       }
     } else if (missingSoft.length >= 4 || (aiSuggestions?.quality_score ?? 100) < 50) {
       if (currentStatus === "draft" || currentStatus === "content_incomplete") {
         newStatus = "needs_review";
       }
     }
+
 
     if (newStatus && newStatus !== currentStatus) {
       await supabase.from("products").update({ status: newStatus as never }).eq("id", product.id);
