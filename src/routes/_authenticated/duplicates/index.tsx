@@ -151,15 +151,25 @@ function DuplicatesPage() {
             <span className="num">{groups?.length ?? 0}</span> مجموعة تكرار محتمل
           </p>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الحالات</SelectItem>
-            <SelectItem value="open">مفتوح</SelectItem>
-            <SelectItem value="resolved">تم الحل</SelectItem>
-            <SelectItem value="ignored">تم التجاهل</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => scanMutation.mutate()}
+            disabled={scanMutation.isPending}
+            variant="default"
+          >
+            {scanMutation.isPending ? <Loader2 className="size-4 ml-1 animate-spin" /> : <ScanSearch className="size-4 ml-1" />}
+            فحص التكرارات الآن
+          </Button>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[160px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الحالات</SelectItem>
+              <SelectItem value="open">مفتوح</SelectItem>
+              <SelectItem value="resolved">تم الحل</SelectItem>
+              <SelectItem value="ignored">تم التجاهل</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isLoading && (
