@@ -127,6 +127,17 @@ function DuplicatesPage() {
     },
   });
 
+  const runScan = useServerFn(scanDuplicates);
+  const scanMutation = useMutation({
+    mutationFn: () => runScan({ data: undefined as any }),
+    onSuccess: (res: any) => {
+      toast.success(`تم الفحص: ${res.productGroups} مجموعة منتجات، ${res.flaggedProducts} عنصر مشكوك فيه`);
+      queryClient.invalidateQueries({ queryKey: ["duplicate-groups"] });
+    },
+    onError: (e: any) => toast.error(e?.message ?? "فشل الفحص"),
+  });
+
+
   const statusColors: Record<string, string> = {
     open: "bg-warning/15 text-warning",
     resolved: "bg-success/15 text-success",
