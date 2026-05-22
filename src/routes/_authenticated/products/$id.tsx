@@ -104,23 +104,26 @@ function ProductDetails() {
           <ProductSuppliersTab productId={p.id} />
         </TabsContent>
 
-        {["ai", "audit"].map((t) => (
-          <TabsContent key={t} value={t} className="mt-4">
-            <Card className="p-12 surface-elevated border-0 text-center">
-              <div className="inline-block size-12 rounded-full bg-accent/15 grid place-items-center mb-3">
-                <Sparkles className="size-5 text-accent" />
-              </div>
-              <h3 className="font-bold mb-1">قيد البناء — المرحلة {t === "audit" ? 4 : 5}</h3>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                هذا التاب جزء من المرحلة القادمة في خطة البناء. البنية البرمجية وقاعدة البيانات جاهزتان لاستقبال الميزة.
-              </p>
-            </Card>
-          </TabsContent>
-        ))}
+        <TabsContent value="ai" className="mt-4">
+          <ProductAIReviewTab productId={p.id} />
+        </TabsContent>
+
+        <TabsContent value="audit" className="mt-4">
+          <Card className="p-12 surface-elevated border-0 text-center">
+            <div className="inline-block size-12 rounded-full bg-accent/15 grid place-items-center mb-3">
+              <ScrollText className="size-5 text-accent" />
+            </div>
+            <h3 className="font-bold mb-1">سجل التدقيق</h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              راجع جميع التغييرات في صفحة <Link to="/audit-logs" className="text-accent underline">سجل التدقيق</Link>.
+            </p>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
+
 
 function Field({ label, value, mono }: { label: string; value: any; mono?: boolean }) {
   return (
