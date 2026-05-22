@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -8,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Copy, CheckCircle, XCircle, Eye, Merge, Trash2, AlertTriangle } from "lucide-react";
+import { Copy, CheckCircle, XCircle, Eye, Merge, Trash2, AlertTriangle, ScanSearch, Loader2 } from "lucide-react";
+import { scanDuplicates } from "@/lib/duplicate-detection.functions";
 
 export const Route = createFileRoute("/_authenticated/duplicates/")({
   head: () => ({ meta: [{ title: "مراجعة التكرار — Alazab PAOP" }] }),
@@ -125,6 +127,17 @@ function DuplicatesPage() {
     },
   });
 
+  const runScan = useServerFn(scanDuplicates);
+  const scanMutation = useMutation({
+    mutationFn: () => runScan({ data: undefined as any }),
+    onSuccess: (res: any) => {
+      toast.success(`تم الفحص: ${res.productGroups} مجموعة منتجات، ${res.flaggedProducts} عنصر مشكوك فيه`);
+      queryClient.invalidateQueries({ queryKey: ["duplicate-groups"] });
+    },
+    onError: (e: any) => toast.error(e?.message ?? "فشل الفحص"),
+  });
+
+
   const statusColors: Record<string, string> = {
     open: "bg-warning/15 text-warning",
     resolved: "bg-success/15 text-success",
@@ -149,15 +162,25 @@ function DuplicatesPage() {
             <span className="num">{groups?.length ?? 0}</span> مجموعة تكرار محتمل
           </p>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">كل الحالات</SelectItem>
-            <SelectItem value="open">مفتوح</SelectItem>
-            <SelectItem value="resolved">تم الحل</SelectItem>
-            <SelectItem value="ignored">تم التجاهل</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => scanMutation.mutate()}
+            disabled={scanMutation.isPending}
+            variant="default"
+          >
+            {scanMutation.isPending ? <Loader2 className="size-4 ml-1 animate-spin" /> : <ScanSearch className="size-4 ml-1" />}
+            فحص التكرارات الآن
+          </Button>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[160px]"><SelectValue placeholder="الحالة" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الحالات</SelectItem>
+              <SelectItem value="open">مفتوح</SelectItem>
+              <SelectItem value="resolved">تم الحل</SelectItem>
+              <SelectItem value="ignored">تم التجاهل</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isLoading && (
