@@ -211,14 +211,15 @@ export const applyAISuggestions = createServerFn({ method: "POST" })
       }
     }
     if (Object.keys(update).length === 0) return { updated: false };
-    const { error } = await supabase.from("products").update(update).eq("id", data.productId);
+    const { error } = await supabase.from("products").update(update as never).eq("id", data.productId);
     if (error) throw new Error(error.message);
     await supabase.from("audit_logs").insert({
       entity_type: "product",
       entity_id: data.productId,
       action: "AI_SUGGESTIONS_APPLIED",
-      new_value: update,
+      new_value: update as never,
     });
+
     return { updated: true, fields: Object.keys(update) };
   });
 
